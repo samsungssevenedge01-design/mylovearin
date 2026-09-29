@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kontrol Hadiah</title>
+<style>
+:root{
+--a:#ff4d8d;--t:#fff;--c:rgba(255,255,255,.12);
+--bg:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:'Trebuchet MS',Arial,sans-serif;
+background:var(--bg);background-attachment:fixed;color:var(--t);
+text-align:center;padding:16px;}
+h1{margin:8px 0 4px;font-size:26px}
+.card{background:var(--c);backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px);border-radius:18px;padding:16px;
+margin:12px auto;max-width:380px;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+h3{margin:0 0 10px;font-size:16px}
+button{background:var(--a);border:none;color:#fff;padding:11px 14px;
+margin:4px;border-radius:12px;font-size:15px;cursor:pointer}
+button:active{transform:scale(.95)}
+.am{width:46%;font-size:13px}
+.on{outline:3px solid #fff}
+.big{font-size:20px;padding:12px 18px}
+input,select{width:88%;padding:10px;margin:5px 0;border-radius:10px;
+border:none;font-size:15px}
+input[type=color]{height:44px;padding:2px}
+.pill{display:inline-block;padding:6px 14px;border-radius:20px;
+font-size:14px;background:rgba(0,0,0,.3)}
+.pill.ok{background:#1faa59}
+.pill.off{background:#b23b3b}
+#app{display:none}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
+background:rgba(0,0,0,.8);color:#fff;padding:10px 18px;border-radius:20px;
+font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}
+#err{color:#ffb3b3;font-size:14px;min-height:18px}
+</style>
+</head>
+<body>
+
+<div id="login" class="card">
+<h1>&#10084; Masuk</h1>
+<input id="em" type="text" placeholder="Nama" autocapitalize="none" autocomplete="username">
+<input id="pw" type="password" placeholder="Password" autocomplete="current-password">
+<div id="err"></div>
+<button onclick="doLogin()">Masuk</button>
+</div>
+
+<div id="app">
+<h1 id="ttl">Untuk Kamu &#10084;</h1>
+<div><span id="st" class="pill">...</span></div>
+<div id="ip" style="font-size:12px;opacity:.7;margin-top:4px"></div>
+
+<div class="card"><h3>&#128172; Pesan di Layar</h3>
+<input id="m" type="text" maxlength="40" placeholder="Ketik pesan...">
+<button onclick="sendMsg()">Kirim</button><br>
+<button onclick="quick('Sayang kamu')">Sayang</button>
+<button onclick="quick('Kangen kamu')">Kangen</button>
+<button onclick="quick('I love you')">I love you</button>
+</div>
+
+<div class="card own"><h3>&#10024; Animasi Layar</h3><div id="modes"></div></div>
+
+<div class="card own"><h3>&#127925; Musik</h3>
+<button class="big" onclick="cmd('prev')">&#9198;</button>
+<button class="big" onclick="cmd('play')">&#9654;</button>
+<button class="big" onclick="cmd('pause')">&#9208;</button>
+<button class="big" onclick="cmd('next')">&#9197;</button><br>
+<button onclick="cmd('voldn')">Vol -</button>
+<button onclick="cmd('volup')">Vol +</button>
+<button onclick="cmd('reset')">Reset Player</button><br>
+<input id="t" type="number" min="1" placeholder="Nomor Track">
+<button onclick="playTrack()">Putar Track</button>
+</div>
+
+<div class="card own"><h3>&#127912; Kustomisasi Tampilan</h3>
+<input id="ti" type="text" maxlength="30" placeholder="Judul">
+<input id="co" type="color" value="#ff4d8d">
+<select id="th"></select><br>
+<button onclick="saveLook()">Simpan</button>
+<button onclick="logout()">Keluar</button>
+</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var API_KEY='AIzaSyCsmu6z-qkUHBQdEKeb9ZAM18g6h7WcxEA';
+var DB='https://esp32normal-default-rtdb.asia-southeast1.firebasedatabase.app';
+var OWNER_UID='vD5h0CuJi9SajRjplZe2hWj4Kc73';
+var DOMAIN='@example.com';
+var isOwner=false,cred=null,token=null,tokenAt=0,seq=0,curMode=-1;
+var modes=['Standby','Equalizer','Teks Berjalan','Detak Sayang','Kangen','Cinta','Hati Melayang','Otomatis'];
+var themes=[
+{n:'Malam Biru',bg:'linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)',t:'#fff',c:'rgba(255,255,255,.12)'},
+{n:'Pink Manis',bg:'linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb)',t:'#4a1730',c:'rgba(255,255,255,.5)'},
+{n:'Senja',bg:'linear-gradient(135deg,#f6d365,#fda085,#f093fb)',t:'#3d1a2e',c:'rgba(255,255,255,.45)'},
+{n:'Samudra',bg:'linear-gradient(135deg,#0f2027,#203a43,#2c5364)',t:'#fff',c:'rgba(255,255,255,.12)'},
+{n:'Lavender',bg:'linear-gradient(135deg,#a18cd1,#fbc2eb,#fad0c4)',t:'#2d1b3d',c:'rgba(255,255,255,.45)'}
+];
+
+function $(i){return document.getElementById(i)}
+function toast(s){var e=$('toast');e.textContent=s;e.style.opacity=1;
+setTimeout(function(){e.style.opacity=0;},1800);}
+
+function applyLook(){
+var i=parseInt(localStorage.getItem('theme')||'0');if(!themes[i])i=0;
+var th=themes[i],r=document.documentElement.style;
+r.setProperty('--bg',th.bg);r.setProperty('--t',th.t);r.setProperty('--c',th.c);
+r.setProperty('--a',localStorage.getItem('color')||'#ff4d8d');
+$('ttl').innerHTML=(localStorage.getItem('title')||'Untuk Kamu')
+.replace(/[<>&]/g,'')+' &#10084;';
+}
+
+function saveLook(){
+localStorage.setItem('title',$('ti').value);
+localStorage.setItem('color',$('co').value);
+localStorage.setItem('theme',$('th').value);
+applyLook();toast('Tampilan disimpan');
+}
+
+async function login(){
+var r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+API_KEY,
+{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({email:cred.e,password:cred.p,returnSecureToken:true})});
+var j=await r.json();
+if(!r.ok)throw new Error((j.error&&j.error.message)||'gagal');
+token=j.idToken;tokenAt=Date.now();
+isOwner=(j.localId===OWNER_UID);
+}
+
+async function tok(){
+if(!token||Date.now()-tokenAt>50*60*1000)await login();
+return token;
+}
+
+async function api(method,path,obj){
+var t=await tok();
+var r=await fetch(DB+path+'.json?auth='+encodeURIComponent(t),
+{method:method,headers:{'Content-Type':'application/json'},
+body:obj?JSON.stringify(obj):undefined});
+if(!r.ok)throw new Error('HTTP '+r.status);
+var txt=await r.text();
+return txt?JSON.parse(txt):null;
+}
+
+async function doLogin(){
+try{
+var em=$('em').value.trim();
+if(!em)return;
+if(em.indexOf('@')<0)em=em+DOMAIN;
+cred={e:em,p:$('pw').value};
+await login();
+document.getElementById('login').style.display='none';
+document.getElementById('app').style.display='block';
+localStorage.setItem('em',$('em').value);
+init();
+}catch(e){$('err').textContent='Gagal: '+e.message;}
+}
+
+function logout(){localStorage.clear();location.reload();}
+
+async function cmd(name,track){
+seq=Math.max(seq+1,Math.floor(Date.now()/1000));
+try{await api('PUT','/control/cmd',{id:seq,name:name,track:track||0});
+toast('Terkirim: '+name);}catch(e){toast('Gagal: '+e.message);}
+}
+
+async function sendMsg(){
+var v=$('m').value.trim();
+if(!v)return;
+try{await api('PUT','/control/msg',v);toast('Pesan terkirim');}
+catch(e){toast('Gagal: '+e.message);}
+}
+
+function quick(s){$('m').value=s;sendMsg();}
+
+function buildModes(){
+var h='';
+for(var i=0;i<modes.length;i++){
+h+='<button class="am" id="am'+i+'" onclick="setMode('+i+',this)">'+modes[i]+'</button>';
+}
+$('modes').innerHTML=h;
+}
+
+async function setMode(n,el){
+try{await api('PUT','/control/mode',n);
+var b=document.getElementsByClassName('am');
+for(var i=0;i<b.length;i++)b[i].classList.remove('on');
+el.classList.add('on');curMode=n;
+toast('Mode: '+modes[n]);}catch(e){toast('Gagal: '+e.message);}
+}
+
+function mark(){
+var b=document.getElementById('am'+curMode);
+if(b)b.classList.add('on');
+}
+
+function playTrack(){
+var n=parseInt($('t').value);
+if(!n||n<1||n>3000){toast('Nomor 1-3000');return;}
+cmd('track',n);
+}
+
+async function refresh(){
+try{
+var s=await api('GET','/status');
+var ok=s&&s.seen&&(Date.now()-s.seen<45000);
+$('st').textContent=ok?'\u25CF Alat Online':'\u25CB Alat Offline';
+$('st').className='pill'+(ok?' ok':' off');
+$('ip').textContent=(s&&s.ip)?('IP lokal: '+s.ip):'';
+}catch(e){
+$('st').textContent='Tidak terhubung ke cloud';
+$('st').className='pill off';
+}
+}
+
+async function init(){
+buildModes();
+var h='';
+for(var i=0;i<themes.length;i++)h+='<option value="'+i+'">'+themes[i].n+'</option>';
+$('th').innerHTML=h;
+$('th').value=localStorage.getItem('theme')||'0';
+$('co').value=localStorage.getItem('color')||'#ff4d8d';
+$('ti').value=localStorage.getItem('title')||'Untuk Kamu';
+$('em').value=localStorage.getItem('em')||'';
+applyLook();
+
+if(!isOwner){
+var els=document.getElementsByClassName('own');
+for(var k=0;k<els.length;k++)els[k].style.display='none';
+$('st').style.display='none';
+$('ip').style.display='none';
+}
+
+try{var mm=await api('GET','/control/msg');if(mm)$('m').value=mm;}catch(e){}
+
+try{
+var c=await api('GET','/control');
+if(c){
+if(c.mode!=null){curMode=c.mode;mark();}
+if(c.msg)$('m').value=c.msg;
+}
+}catch(e){}
+
+refresh();setInterval(refresh,5000);
+}
+
+if(localStorage.getItem('em'))$('em').value=localStorage.getItem('em');
+</script>
+</body>
+</html>
