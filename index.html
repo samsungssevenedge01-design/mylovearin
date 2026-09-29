@@ -3,59 +3,132 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kontrol Hadiah</title>
+<title>Untuk Arin ❤</title>
 <style>
 :root{
 --a:#ff4d8d;--t:#fff;--c:rgba(255,255,255,.12);
 --bg:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
 }
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;font-family:'Trebuchet MS',Arial,sans-serif;
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{min-height:100vh;font-family:'Trebuchet MS',Arial,sans-serif;
 background:var(--bg);background-attachment:fixed;color:var(--t);
-text-align:center;padding:16px;}
-h1{margin:8px 0 4px;font-size:26px}
-.card{background:var(--c);backdrop-filter:blur(8px);
--webkit-backdrop-filter:blur(8px);border-radius:18px;padding:16px;
-margin:12px auto;max-width:380px;box-shadow:0 6px 20px rgba(0,0,0,.2)}
-h3{margin:0 0 10px;font-size:16px}
-button{background:var(--a);border:none;color:#fff;padding:11px 14px;
-margin:4px;border-radius:12px;font-size:15px;cursor:pointer}
-button:active{transform:scale(.95)}
+text-align:center;padding:16px;overflow-x:hidden;position:relative;
+transition:background .5s}
+.bg-heart{position:fixed;bottom:-60px;font-size:24px;opacity:.35;
+animation:floatUp linear infinite;pointer-events:none;z-index:0;
+filter:drop-shadow(0 0 6px currentColor)}
+@keyframes floatUp{
+0%{transform:translateY(0) rotate(0deg);opacity:0}
+10%{opacity:.4}90%{opacity:.4}
+100%{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+.trail{position:fixed;pointer-events:none;font-size:18px;
+animation:trailFade .9s ease-out forwards;z-index:9999}
+@keyframes trailFade{
+0%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+100%{opacity:0;transform:translate(-50%,-50%) scale(.3) translateY(-30px)}}
+h1{margin:8px 0 4px;font-size:28px;
+text-shadow:0 0 20px var(--a),0 0 40px var(--a);
+animation:heartBeat 2s ease-in-out infinite}
+@keyframes heartBeat{
+0%,100%{transform:scale(1)}15%{transform:scale(1.06)}
+30%{transform:scale(1)}45%{transform:scale(1.03)}}
+.card{background:var(--c);backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.18);
+border-radius:22px;padding:18px;margin:14px auto;max-width:400px;
+box-shadow:0 8px 30px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.15);
+position:relative;z-index:1;transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+h3{margin:0 0 12px;font-size:16px;letter-spacing:.5px}
+button{background:linear-gradient(135deg,var(--a),#ff85b3);
+border:none;color:#fff;padding:12px 16px;margin:5px;border-radius:14px;
+font-size:15px;cursor:pointer;font-weight:600;
+box-shadow:0 4px 14px rgba(0,0,0,.25);
+transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden}
+button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.35)}
+button:active{transform:scale(.92)}
+button::after{content:'';position:absolute;inset:0;
+background:radial-gradient(circle at center,rgba(255,255,255,.5),transparent 60%);
+opacity:0;transition:opacity .3s}
+button:active::after{opacity:1}
 .am{width:46%;font-size:13px}
-.on{outline:3px solid #fff}
-.big{font-size:20px;padding:12px 18px}
-input,select{width:88%;padding:10px;margin:5px 0;border-radius:10px;
-border:none;font-size:15px}
-input[type=color]{height:44px;padding:2px}
-.pill{display:inline-block;padding:6px 14px;border-radius:20px;
-font-size:14px;background:rgba(0,0,0,.3)}
-.pill.ok{background:#1faa59}
+.on{outline:3px solid #fff;outline-offset:2px}
+.big{font-size:22px;padding:14px 20px}
+input,select{width:90%;padding:12px;margin:6px 0;border-radius:12px;
+border:1px solid rgba(255,255,255,.2);font-size:15px;
+background:rgba(255,255,255,.08);color:var(--t);outline:none;
+transition:border .2s,background .2s}
+input:focus,select:focus{border-color:var(--a);background:rgba(255,255,255,.15)}
+input::placeholder{color:rgba(255,255,255,.5)}
+select option{color:#333;background:#fff}
+input[type=color]{height:48px;padding:4px;cursor:pointer}
+.pill{display:inline-block;padding:6px 16px;border-radius:20px;
+font-size:13px;background:rgba(0,0,0,.3);
+border:1px solid rgba(255,255,255,.15);transition:background .3s}
+.pill.ok{background:#1faa59;box-shadow:0 0 15px #1faa59}
 .pill.off{background:#b23b3b}
-#app{display:none}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);
-background:rgba(0,0,0,.8);color:#fff;padding:10px 18px;border-radius:20px;
-font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}
-#err{color:#ffb3b3;font-size:14px;min-height:18px}
+#app{display:none;animation:fadeIn .6s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+#toast{position:fixed;left:50%;bottom:30px;
+transform:translateX(-50%) translateY(20px);
+background:rgba(0,0,0,.85);color:#fff;padding:12px 22px;
+border-radius:24px;font-size:14px;opacity:0;transition:all .3s;
+pointer-events:none;z-index:9999;border:1px solid var(--a);
+box-shadow:0 0 20px rgba(255,77,141,.4)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#err{color:#ffb3b3;font-size:14px;min-height:20px;margin:6px 0}
+.photo-wrap{position:relative;display:inline-block;margin:8px auto;
+padding:8px;background:linear-gradient(135deg,var(--a),#ff85b3,#ffd1e3);
+border-radius:24px;box-shadow:0 8px 30px rgba(255,77,141,.3);cursor:pointer}
+#photoPreview{display:block;max-width:220px;max-height:220px;
+border-radius:18px;background:rgba(0,0,0,.2);object-fit:cover}
+.photo-wrap::before{content:'❤';position:absolute;top:-14px;right:-8px;
+font-size:24px;color:var(--a);text-shadow:0 0 12px var(--a);
+animation:heartBeat 1.8s infinite}
+.photo-empty{width:180px;height:180px;display:flex;
+align-items:center;justify-content:center;color:rgba(255,255,255,.5);
+font-size:14px;border:2px dashed rgba(255,255,255,.3);border-radius:18px;
+line-height:1.4;padding:20px}
+.love-msg{font-size:15px;font-style:italic;margin:10px auto;
+padding:10px 16px;max-width:320px;color:var(--t);opacity:.9}
+.love-msg::before,.love-msg::after{content:'❝';font-size:20px;
+color:var(--a);margin:0 4px}
+.love-msg::after{content:'❞'}
 </style>
 </head>
 <body>
 
 <div id="login" class="card">
-<h1>&#10084; Masuk</h1>
-<input id="em" type="text" placeholder="Nama" autocapitalize="none" autocomplete="username">
+<h1>&#10084; Hai Sayang</h1>
+<div style="margin:14px 0 8px;font-size:14px;opacity:.85">Masuk dulu ya</div>
+<input id="em" type="text" placeholder="Nama kamu" autocapitalize="none" autocomplete="username">
 <input id="pw" type="password" placeholder="Password" autocomplete="current-password">
 <div id="err"></div>
-<button onclick="doLogin()">Masuk</button>
+<button onclick="doLogin()" style="padding:12px 36px;font-size:16px">Masuk &#128149;</button>
 </div>
 
 <div id="app">
+
+<div class="card" style="padding-top:22px">
 <h1 id="ttl">Untuk Kamu &#10084;</h1>
+<div class="photo-wrap" id="photoWrap" style="margin-top:12px">
+<img id="photoPreview" style="display:none" alt="">
+<div id="photoEmpty" class="photo-empty">Tap untuk<br>tambah foto 📷</div>
+</div>
+<input type="file" id="photoInput" accept="image/*" style="display:none">
+<div style="margin-top:8px">
+<button onclick="pickPhoto()" style="font-size:12px;padding:8px 14px">&#128247; Ganti Foto</button>
+<button onclick="removePhoto()" style="font-size:12px;padding:8px 14px">&#128465; Hapus</button>
+</div>
+<div class="love-msg" id="loveMsg">Kamu adalah alasan aku tersenyum hari ini</div>
+</div>
+
 <div><span id="st" class="pill">...</span></div>
-<div id="ip" style="font-size:12px;opacity:.7;margin-top:4px"></div>
+<div id="ip" style="font-size:12px;opacity:.7;margin-top:6px"></div>
 
 <div class="card"><h3>&#128172; Pesan di Layar</h3>
-<input id="m" type="text" maxlength="40" placeholder="Ketik pesan...">
-<button onclick="sendMsg()">Kirim</button><br>
+<input id="m" type="text" maxlength="40" placeholder="Ketik pesan manis...">
+<button onclick="sendMsg()">Kirim &#128140;</button><br>
 <button onclick="quick('Sayang kamu')">Sayang</button>
 <button onclick="quick('Kangen kamu')">Kangen</button>
 <button onclick="quick('I love you')">I love you</button>
@@ -72,13 +145,14 @@ font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}
 <button onclick="cmd('volup')">Vol +</button>
 <button onclick="cmd('reset')">Reset Player</button><br>
 <input id="t" type="number" min="1" placeholder="Nomor Track">
-<button onclick="playTrack()">Putar Track</button>
+<button onclick="playTrack()">Putar Track &#127926;</button>
 </div>
 
 <div class="card own"><h3>&#127912; Kustomisasi Tampilan</h3>
-<input id="ti" type="text" maxlength="30" placeholder="Judul">
+<input id="ti" type="text" maxlength="30" placeholder="Judul halaman">
 <input id="co" type="color" value="#ff4d8d">
 <select id="th"></select><br>
+<input id="lm" type="text" maxlength="60" placeholder="Kalimat cinta...">
 <button onclick="saveLook()">Simpan</button>
 <button onclick="logout()">Keluar</button>
 </div>
@@ -100,10 +174,77 @@ var themes=[
 {n:'Samudra',bg:'linear-gradient(135deg,#0f2027,#203a43,#2c5364)',t:'#fff',c:'rgba(255,255,255,.12)'},
 {n:'Lavender',bg:'linear-gradient(135deg,#a18cd1,#fbc2eb,#fad0c4)',t:'#2d1b3d',c:'rgba(255,255,255,.45)'}
 ];
+var trailEmojis=['❤','💕','✨','💖','🌸','💗','💝','⭐'];
 
 function $(i){return document.getElementById(i)}
-function toast(s){var e=$('toast');e.textContent=s;e.style.opacity=1;
-setTimeout(function(){e.style.opacity=0;},1800);}
+function toast(s){var e=$('toast');e.textContent=s;e.classList.add('show');
+setTimeout(function(){e.classList.remove('show');},1800);}
+
+function spawnBgHearts(){
+for(var i=0;i<10;i++){(function(idx){
+setTimeout(function(){
+var h=document.createElement('div');
+h.className='bg-heart';
+h.textContent=trailEmojis[Math.floor(Math.random()*trailEmojis.length)];
+h.style.left=(Math.random()*100)+'%';
+h.style.fontSize=(14+Math.random()*20)+'px';
+h.style.animationDuration=(10+Math.random()*10)+'s';
+h.style.animationDelay=(Math.random()*8)+'s';
+h.style.color='#ff8ab8';
+document.body.appendChild(h);
+},idx*400);})(i);}
+}
+
+var lastTrail=0;
+function spawnTrail(x,y){
+var now=Date.now();if(now-lastTrail<60)return;lastTrail=now;
+var t=document.createElement('div');
+t.className='trail';
+t.textContent=trailEmojis[Math.floor(Math.random()*trailEmojis.length)];
+t.style.left=x+'px';t.style.top=y+'px';t.style.color='#ff6ea9';
+document.body.appendChild(t);
+setTimeout(function(){t.remove();},900);
+}
+document.addEventListener('mousemove',function(e){spawnTrail(e.clientX,e.clientY);});
+document.addEventListener('touchmove',function(e){
+if(e.touches[0])spawnTrail(e.touches[0].clientX,e.touches[0].clientY);
+},{passive:true});
+document.addEventListener('touchstart',function(e){
+if(e.touches[0])spawnTrail(e.touches[0].clientX,e.touches[0].clientY);
+},{passive:true});
+
+function pickPhoto(){$('photoInput').click();}
+$('photoInput').addEventListener('change',function(e){
+var f=e.target.files[0];if(!f)return;
+var r=new FileReader();
+r.onload=function(){
+var img=new Image();
+img.onload=function(){
+var c=document.createElement('canvas');
+var mw=500,mh=500,w=img.width,h=img.height;
+var sc=Math.min(1,mw/w,mh/h);
+c.width=w*sc;c.height=h*sc;
+c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+var data=c.toDataURL('image/jpeg',0.75);
+try{localStorage.setItem('photo',data);showPhoto(data);
+toast('Foto tersimpan 💕');}catch(err){toast('Foto terlalu besar');}
+};
+img.src=r.result;
+};
+r.readAsDataURL(f);
+});
+function showPhoto(src){
+$('photoPreview').src=src;
+$('photoPreview').style.display='block';
+$('photoEmpty').style.display='none';
+}
+function removePhoto(){
+localStorage.removeItem('photo');
+$('photoPreview').style.display='none';
+$('photoPreview').src='';
+$('photoEmpty').style.display='flex';
+toast('Foto dihapus');
+}
 
 function applyLook(){
 var i=parseInt(localStorage.getItem('theme')||'0');if(!themes[i])i=0;
@@ -112,13 +253,14 @@ r.setProperty('--bg',th.bg);r.setProperty('--t',th.t);r.setProperty('--c',th.c);
 r.setProperty('--a',localStorage.getItem('color')||'#ff4d8d');
 $('ttl').innerHTML=(localStorage.getItem('title')||'Untuk Kamu')
 .replace(/[<>&]/g,'')+' &#10084;';
+$('loveMsg').textContent=localStorage.getItem('loveMsg')||'Kamu adalah alasan aku tersenyum hari ini';
 }
-
 function saveLook(){
 localStorage.setItem('title',$('ti').value);
 localStorage.setItem('color',$('co').value);
 localStorage.setItem('theme',$('th').value);
-applyLook();toast('Tampilan disimpan');
+localStorage.setItem('loveMsg',$('lm').value);
+applyLook();toast('Tampilan disimpan ✨');
 }
 
 async function login(){
@@ -130,12 +272,10 @@ if(!r.ok)throw new Error((j.error&&j.error.message)||'gagal');
 token=j.idToken;tokenAt=Date.now();
 isOwner=(j.localId===OWNER_UID);
 }
-
 async function tok(){
 if(!token||Date.now()-tokenAt>50*60*1000)await login();
 return token;
 }
-
 async function api(method,path,obj){
 var t=await tok();
 var r=await fetch(DB+path+'.json?auth='+encodeURIComponent(t),
@@ -145,7 +285,6 @@ if(!r.ok)throw new Error('HTTP '+r.status);
 var txt=await r.text();
 return txt?JSON.parse(txt):null;
 }
-
 async function doLogin(){
 try{
 var em=$('em').value.trim();
@@ -159,7 +298,6 @@ localStorage.setItem('em',$('em').value);
 init();
 }catch(e){$('err').textContent='Gagal: '+e.message;}
 }
-
 function logout(){localStorage.clear();location.reload();}
 
 async function cmd(name,track){
@@ -167,15 +305,31 @@ seq=Math.max(seq+1,Math.floor(Date.now()/1000));
 try{await api('PUT','/control/cmd',{id:seq,name:name,track:track||0});
 toast('Terkirim: '+name);}catch(e){toast('Gagal: '+e.message);}
 }
-
 async function sendMsg(){
 var v=$('m').value.trim();
 if(!v)return;
-try{await api('PUT','/control/msg',v);toast('Pesan terkirim');}
-catch(e){toast('Gagal: '+e.message);}
+try{await api('PUT','/control/msg',v);toast('Pesan terkirim 💌');
+burstEmojis();}catch(e){toast('Gagal: '+e.message);}
 }
-
 function quick(s){$('m').value=s;sendMsg();}
+
+function burstEmojis(){
+var arr=['💖','💕','💗','✨','🌸','❤️'];
+for(var i=0;i<20;i++){(function(){
+setTimeout(function(){
+var e=document.createElement('div');
+e.textContent=arr[Math.floor(Math.random()*arr.length)];
+e.style.position='fixed';
+e.style.left=(30+Math.random()*40)+'%';
+e.style.top=(30+Math.random()*40)+'%';
+e.style.fontSize=(20+Math.random()*20)+'px';
+e.style.pointerEvents='none';
+e.style.zIndex='9999';
+e.style.animation='trailFade 1.5s ease-out forwards';
+document.body.appendChild(e);
+setTimeout(function(){e.remove();},1500);
+},i*40);})();}
+}
 
 function buildModes(){
 var h='';
@@ -184,7 +338,6 @@ h+='<button class="am" id="am'+i+'" onclick="setMode('+i+',this)">'+modes[i]+'</
 }
 $('modes').innerHTML=h;
 }
-
 async function setMode(n,el){
 try{await api('PUT','/control/mode',n);
 var b=document.getElementsByClassName('am');
@@ -192,12 +345,7 @@ for(var i=0;i<b.length;i++)b[i].classList.remove('on');
 el.classList.add('on');curMode=n;
 toast('Mode: '+modes[n]);}catch(e){toast('Gagal: '+e.message);}
 }
-
-function mark(){
-var b=document.getElementById('am'+curMode);
-if(b)b.classList.add('on');
-}
-
+function mark(){var b=document.getElementById('am'+curMode);if(b)b.classList.add('on');}
 function playTrack(){
 var n=parseInt($('t').value);
 if(!n||n<1||n>3000){toast('Nomor 1-3000');return;}
@@ -208,7 +356,7 @@ async function refresh(){
 try{
 var s=await api('GET','/status');
 var ok=s&&s.seen&&(Date.now()-s.seen<45000);
-$('st').textContent=ok?'\u25CF Alat Online':'\u25CB Alat Offline';
+$('st').textContent=ok?'Alat Online':'Alat Offline';
 $('st').className='pill'+(ok?' ok':' off');
 $('ip').textContent=(s&&s.ip)?('IP lokal: '+s.ip):'';
 }catch(e){
@@ -225,8 +373,12 @@ $('th').innerHTML=h;
 $('th').value=localStorage.getItem('theme')||'0';
 $('co').value=localStorage.getItem('color')||'#ff4d8d';
 $('ti').value=localStorage.getItem('title')||'Untuk Kamu';
+$('lm').value=localStorage.getItem('loveMsg')||'Kamu adalah alasan aku tersenyum hari ini';
 $('em').value=localStorage.getItem('em')||'';
 applyLook();
+
+var savedPhoto=localStorage.getItem('photo');
+if(savedPhoto)showPhoto(savedPhoto);
 
 if(!isOwner){
 var els=document.getElementsByClassName('own');
@@ -236,7 +388,6 @@ $('ip').style.display='none';
 }
 
 try{var mm=await api('GET','/control/msg');if(mm)$('m').value=mm;}catch(e){}
-
 try{
 var c=await api('GET','/control');
 if(c){
@@ -248,6 +399,8 @@ if(c.msg)$('m').value=c.msg;
 refresh();setInterval(refresh,5000);
 }
 
+spawnBgHearts();
+$('photoWrap').addEventListener('click',function(){pickPhoto();});
 if(localStorage.getItem('em'))$('em').value=localStorage.getItem('em');
 </script>
 </body>
